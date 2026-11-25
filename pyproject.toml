@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aerospace-dwindle"
+version = "0.1.20261125"
+description = "Hyprland-style dwindle auto-splitting for the AeroSpace tiling window manager on macOS"
+readme = "README.md"
+# 3.9 = system Python on macOS 13 Ventura.
+requires-python = ">=3.9"
+dependencies = [
+    "pyobjc-framework-Quartz>=9.0; sys_platform == 'darwin'",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: MacOS X",
+    "Intended Audience :: End Users/Desktop",
+    "Operating System :: MacOS :: MacOS X",
+    "Programming Language :: Python :: 3",
+    "Topic :: Desktop Environment :: Window Managers",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[project.scripts]
+aerospace-dwindle = "aerospace_dwindle.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aerospace_dwindle"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
