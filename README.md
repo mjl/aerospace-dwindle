@@ -59,6 +59,13 @@ shuffles windows when one closes.
   `aerospace flatten-workspace-tree` resets a workspace.
 - Only tested on Intel macOS 13 with AeroSpace 0.21.3-Beta.
 
+## How this was made
+
+This is a small personal tool, written largely with AI assistance (Claude Opus 5.5),
+then tested and used on my own machine. It does one job and I try to keep it
+working for my setup; issues and pull requests are welcome, but there are
+no guarantees beyond that.
+
 ## Development
 
 ```sh
