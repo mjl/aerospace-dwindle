@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """End-to-end: real subprocesses against a fake `aerospace` script, fake Quartz."""
 import sys
 import textwrap

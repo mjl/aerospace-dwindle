@@ -83,3 +83,7 @@ pytest
 ```
 
 Tests fake both boundaries (AeroSpace CLI and Quartz) and run on any OS.
+
+## License
+
+BSD 3-Clause, see [LICENSE](LICENSE).

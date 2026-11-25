@@ -5,6 +5,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- BSD 3-Clause license (`LICENSE`, package metadata, SPDX headers in sources).
 - `--default-orientation auto|horizontal|vertical` (default `auto`: by monitor
   aspect ratio, like AeroSpace's `default-root-container-orientation`).
 

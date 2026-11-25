@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """Render the ~/.aerospace.toml snippet that launches the daemon.
 
 Most setup pain was paths, so everything is resolved to absolute paths here.

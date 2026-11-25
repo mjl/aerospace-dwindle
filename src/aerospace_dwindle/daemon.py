@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """Event handling: turn AeroSpace events into split / layout commands.
 
 Dwindle emulation: when a window appears, `split` it along its longer edge.

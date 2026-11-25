@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """Window geometry via Quartz (CoreGraphics).
 
 Isolated so the rest of the package (and the tests) never import Quartz.

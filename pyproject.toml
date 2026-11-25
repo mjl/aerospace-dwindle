@@ -1,5 +1,6 @@
 [build-system]
-requires = ["hatchling>=1.18"]
+# >=1.27: PEP 639 SPDX license expression
+requires = ["hatchling>=1.27"]
 build-backend = "hatchling.build"
 
 [project]
@@ -7,6 +8,9 @@ name = "aerospace-dwindle"
 version = "0.1.20261125"
 description = "Hyprland-style dwindle auto-splitting for the AeroSpace tiling window manager on macOS"
 readme = "README.md"
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
+authors = [{ name = "Martin J. Laubach" }]
 # 3.9 = system Python on macOS 13 Ventura.
 requires-python = ">=3.9"
 dependencies = [

@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """Dwindle-like auto-split daemon for AeroSpace.
 
 Listens to `aerospace subscribe window-detected` and, for each new window,

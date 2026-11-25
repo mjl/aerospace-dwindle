@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 import pytest
 
 from aerospace_dwindle.daemon import Daemon, Settings

@@ -1,3 +1,5 @@
+# Copyright (c) 2026, Martin J. Laubach
+# SPDX-License-Identifier: BSD-3-Clause
 """Hyprland-style dwindle auto-splitting for the AeroSpace tiling WM."""
 
 try:
