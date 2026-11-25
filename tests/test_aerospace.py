@@ -70,12 +70,52 @@ def test_check_version_unparseable_is_tolerated():
     check_version("garbage")
 
 
-def test_commands_use_runner():
+def recording(rc=0, out=""):
     calls = []
-    a = AeroSpace("/x/aerospace", runner=lambda argv: calls.append(list(argv)) or 0)
+
+    def runner(argv):
+        calls.append(list(argv))
+        return rc, out
+
+    return calls, runner
+
+
+def test_commands_use_runner():
+    calls, runner = recording()
+    a = AeroSpace("/x/aerospace", runner=runner)
     a.split(42, "vertical")
     a.refresh()
+    a.flatten("M")
+    a.set_root_orientation("M", "horizontal")
     assert calls == [
         ["/x/aerospace", "split", "--window-id", "42", "vertical"],
         ["/x/aerospace", "list-windows", "--focused"],
+        ["/x/aerospace", "flatten-workspace-tree", "--workspace", "M"],
+        ["/x/aerospace", "layout", "--workspace", "M", "--root", "horizontal"],
     ]
+
+
+def test_windows_parses_ids_and_layouts():
+    calls, runner = recording(out="17696|v_tiles\n17647|h_tiles\n9|floating\n\ngarbage\n")
+    assert AeroSpace("a", runner=runner).windows("1") == [
+        (17696, "v_tiles"),
+        (17647, "h_tiles"),
+        (9, "floating"),
+    ]
+    assert calls == [
+        ["a", "list-windows", "--workspace", "1", "--format",
+         "%{window-id}|%{window-parent-container-layout}"]
+    ]
+
+
+def test_windows_failure_is_none():
+    _, runner = recording(rc=1)
+    assert AeroSpace("a", runner=runner).windows("1") is None
+
+
+def test_workspace_monitor():
+    _, runner = recording(out="1|1\n5|2\nweird|name|2\n")
+    a = AeroSpace("a", runner=runner)
+    assert a.workspace_monitor("5") == 2
+    assert a.workspace_monitor("weird|name") == 2
+    assert a.workspace_monitor("nope") is None

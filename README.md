@@ -9,6 +9,12 @@ runs `aerospace split --window-id <id> horizontal|vertical` based on the
 window's size (read via Quartz). On focus changes it pokes AeroSpace so closed
 windows don't leave holes.
 
+Workspaces with **one or two tiling windows** always use the default
+orientation (side by side on wide monitors, stacked on tall ones): their tree
+is flattened and the root orientation set, both when a window appears and
+when the window count drops (e.g. after closing). Floating windows are
+ignored. Manual rearrangements are kept until the window count changes.
+
 ## Requirements
 
 - macOS, AeroSpace **>= 0.21.0-Beta** (needs `aerospace subscribe`)
@@ -43,10 +49,13 @@ The daemon exits when AeroSpace quits; the next AeroSpace start launches it agai
 
 ```
 aerospace-dwindle [--aerospace-cli PATH] [-v] [--log-file PATH]
-                  [--on-focus] [--settle-step SEC] [--settle-tries N]
-                  [--refresh-delay SEC]
+                  [--on-focus] [--default-orientation {auto,horizontal,vertical}]
+                  [--settle-step SEC] [--settle-tries N] [--refresh-delay SEC]
 aerospace-dwindle print-config [--log PATH]
 ```
+
+`--default-orientation` should match AeroSpace's
+`default-root-container-orientation` (default `auto`: by monitor aspect ratio).
 
 `--on-focus` is a legacy mode that also splits on every focus change; it
 shuffles windows when one closes.

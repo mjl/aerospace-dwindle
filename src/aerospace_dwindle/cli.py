@@ -8,7 +8,7 @@ from typing import Optional, Sequence
 
 from . import __version__, config, geometry
 from .aerospace import AeroSpace, VersionError, check_version, find_cli
-from .daemon import EVENTS, Daemon, Settings
+from .daemon import EVENTS, ORIENTATIONS, SMALL_WORKSPACE, Daemon, Settings
 
 log = logging.getLogger("aerospace_dwindle")
 
@@ -46,6 +46,14 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="legacy: also split the focused window on every focus change "
         "(shuffles windows when one closes)",
+    )
+    g.add_argument(
+        "--default-orientation",
+        choices=ORIENTATIONS,
+        default=d.default_orientation,
+        help=f"layout of workspaces with <= {SMALL_WORKSPACE} tiling windows; match "
+        "AeroSpace's default-root-container-orientation (default: %(default)s = "
+        "horizontal on wide monitors, vertical on tall ones)",
     )
     g.add_argument(
         "--settle-step",
@@ -122,8 +130,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         settle_step=args.settle_step,
         settle_tries=args.settle_tries,
         refresh_delay=args.refresh_delay,
+        default_orientation=args.default_orientation,
     )
-    daemon = Daemon(aerospace, geometry.window_size, settings)
+    daemon = Daemon(
+        aerospace, geometry.window_size, settings, monitor_size=geometry.monitor_size
+    )
     log.info("aerospace-dwindle %s started (cli: %s)", __version__, cli)
     try:
         proc = aerospace.subscribe(EVENTS)

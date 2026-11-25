@@ -28,13 +28,22 @@ def fake_quartz(monkeypatch):
         return [{"kCGWindowBounds": {"X": 0, "Y": 0, "Width": w, "Height": h}}]
 
     mod.CGWindowListCopyWindowInfo = info
+    # one 3840x2160 display
+    mod.CGGetActiveDisplayList = lambda n, a, b: (0, (7,), 1)
+    mod.CGDisplayMirrorsDisplay = lambda d: 0
+    mod.CGDisplayBounds = lambda d: types.SimpleNamespace(
+        origin=types.SimpleNamespace(x=0, y=0),
+        size=types.SimpleNamespace(width=3840, height=2160),
+    )
     monkeypatch.setitem(sys.modules, "Quartz", mod)
 
 
 @pytest.fixture
 def fake_cli(tmp_path):
-    def make(version="0.21.3-Beta"):
+    def make(version="0.21.3-Beta", windows=("1|h_tiles", "2|v_tiles", "9|v_tiles")):
         log = tmp_path / "calls.log"
+        window_list = tmp_path / "windows.txt"  # static list-windows answer
+        window_list.write_text("".join(w + "\n" for w in windows))
         script = tmp_path / "bin" / "aerospace"
         script.parent.mkdir(exist_ok=True)
         events = tmp_path / "events.jsonl"
@@ -49,6 +58,8 @@ def fake_cli(tmp_path):
                     echo "aerospace CLI client version: {version} abc"
                     echo "AeroSpace.app server version: {version} abc" ;;
                   subscribe) cat '{events}' ;;
+                  list-windows) cat '{window_list}' ;;
+                  list-workspaces) echo 'M|1' ;;
                 esac
                 """
             )
@@ -59,15 +70,36 @@ def fake_cli(tmp_path):
     return make
 
 
-def test_daemon_end_to_end(fake_quartz, fake_cli):
+RUN = ["--settle-step", "0", "--refresh-delay", "0"]
+QUERY = "list-windows --workspace M --format %{window-id}|%{window-parent-container-layout}"
+
+
+def test_daemon_end_to_end_large_workspace(fake_quartz, fake_cli):
     script, log = fake_cli()
-    rc = cli.main(["--aerospace-cli", script, "--settle-step", "0", "--refresh-delay", "0"])
-    assert rc == 0
+    assert cli.main(["--aerospace-cli", script, *RUN]) == 0
     assert log.read_text().splitlines() == [
         "--version",
         "subscribe --no-send-initial window-detected focus-changed",
+        QUERY,
         "split --window-id 1 horizontal",
-        "list-windows --focused",
+        QUERY,
+        QUERY,
+        "split --window-id 2 vertical",
+    ]
+
+
+def test_daemon_end_to_end_small_workspace(fake_quartz, fake_cli):
+    script, log = fake_cli(windows=["1|v_tiles"])
+    assert cli.main(["--aerospace-cli", script, *RUN]) == 0
+    assert log.read_text().splitlines() == [
+        "--version",
+        "subscribe --no-send-initial window-detected focus-changed",
+        QUERY,
+        "list-workspaces --all --format %{workspace}|%{monitor-id}",
+        "flatten-workspace-tree --workspace M",
+        "layout --workspace M --root horizontal",
+        QUERY,  # focus-changed: count unchanged
+        QUERY,  # window 2 not (yet) listed: size-based fallback
         "split --window-id 2 vertical",
     ]
 
